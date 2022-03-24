@@ -61,7 +61,7 @@ mainFunc () {
 	else
 		# cat $parent_dir/$first_dir/gBGC_folder/txt/*_BGC.txt >> $parent_dir/$first_dir/gBGC_summary.txt
 		# sed -i "/BGC/d" $parent_dir/$first_dir/gBGC_summary.txt
-		python3 /home/scripts/parseAntismash.py  -i $parent_dir/$first_dir/gBGC_folder/$b_name.gbk -o $parent_dir/$first_dir/gBGC_summary.txt
+		python3 /home/bin/utils/parseAntismash.py  -i $parent_dir/$first_dir/gBGC_folder/$b_name.gbk -o $parent_dir/$first_dir/gBGC_summary.txt
 		if [ "$clean_up" = true ] ; then rm -r $parent_dir/$first_dir/gBGC_folder ; fi
 		gBGC_hits=$(<"$parent_dir/$first_dir/gBGC_summary.txt" wc -l )
 
@@ -95,7 +95,7 @@ mainFunc () {
 			#copy all pBGCs summaries to one file
 			# cat $parent_dir/$first_dir/pBGC_folder/txt/*_BGC.txt >> $parent_dir/$first_dir/pBGC_summary.txt
 			# sed -i "/BGC/d" $parent_dir/$first_dir/pBGC_summary.txt
-			python3 /home/scripts/parseAntismash.py  -i $parent_dir/$first_dir/pBGC_folder/all_prophages.gbk -o $parent_dir/$first_dir/pBGC_summary.txt
+			python3 /home/bin/utils/parseAntismash.py  -i $parent_dir/$first_dir/pBGC_folder/all_prophages.gbk -o $parent_dir/$first_dir/pBGC_summary.txt
 
 			if [ "$clean_up" = true ] ; then rm -r $parent_dir/$first_dir/pBGC_folder ; fi
 
@@ -137,7 +137,7 @@ mainFunc () {
 				#converting to fasta
 				#note that this script insist on outputting the fasta in
 				#in the same as the input, requiring som messing around with the -o
-				python3 /home/scripts/GenBank-to-FASTA/genbank_to_fasta.py  -i $k -o ../../../../all_pBGCs/$b_name.$clus_num.fna -s 'whole' -u $b_name.$clus_num
+				python3 /home/bin/utils/genbank_to_fasta.py  -i $k -o ../../../../all_pBGCs/$b_name.$clus_num.fna -s 'whole' -u $b_name.$clus_num
 			done
 
 		else
