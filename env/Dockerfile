@@ -114,6 +114,7 @@ RUN apt-get install hmmer2 hmmer diamond-aligner fasttree prodigal muscle
 RUN wget -q https://dl.secondarymetabolites.org/releases/6.0.0/antismash-6.0.0.tar.gz
 RUN tar -zxf antismash-6.0.0.tar.gz
 RUN pip3 install ./antismash-6.0.0
+RUN pip3 uninstall jinja2
 RUN download-antismash-databases
 RUN rm antismash-6.0.0.tar.gz
 
