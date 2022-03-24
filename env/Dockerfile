@@ -128,5 +128,5 @@ COPY ./utils/parseAntismash.py /home/bin/utils
 RUN chmod +x /home/bin/utils/parseAntismash.py
 
 
-COPY ./utils/Find-pBGCs.sh /home/bin/utils
+COPY ./Find-pBGCs.sh /home/bin/utils
 RUN chmod +x /home/bin/utils/Find-pBGCs.sh
