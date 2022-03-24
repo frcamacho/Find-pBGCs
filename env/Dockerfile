@@ -121,7 +121,12 @@ RUN rm antismash-6.0.0.tar.gz
 ## add utils files
 RUN mkdir -p /home/bin/utils
 COPY ./utils/genbank_to_fasta.py /home/bin/utils
-RUN chmod +x ./genbank_to_fasta.py
+RUN chmod +x /home/bin/utils/genbank_to_fasta.py
+
+RUN mkdir -p /home/bin/utils
+COPY ./utils/parseAntismash.py /home/bin/utils
+RUN chmod +x /home/bin/utils/parseAntismash.py
+
 
 COPY ./utils/Find-pBGCs.sh /home/bin/utils
-RUN chmod +x ./Find-pBGCs.sh
+RUN chmod +x /home/bin/utils/Find-pBGCs.sh
