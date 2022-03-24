@@ -116,3 +116,11 @@ RUN tar -zxf antismash-6.0.0.tar.gz
 RUN pip install ./antismash-6.0.0
 RUN download-antismash-databases
 RUN rm antismash-6.0.0.tar.gz
+
+## add utils files
+RUN mkdir -p /home/bin/utils
+COPY ../utils/genbank_to_fasta.py /home/bin/utils
+RUN chmod +x ./genbank_to_fasta.py
+
+COPY ../utils/Find-pBGCs.sh /home/bin/utils
+RUN chmod +x ./Find-pBGCs.sh
