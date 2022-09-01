@@ -7,7 +7,7 @@ library(RColorBrewer)
 library(stringr)
 library(ggsci)
 
-setwd('/Users/admin/Documents/Projects/pbgc-analysis')
+setwd('/Users/francine/Documents/Projects/find-pbgcs')
 rm(list=ls())
 
 
@@ -59,10 +59,10 @@ sort(table(only_pBGC[only_pBGC$genome_anti_hits<2,]$species))
 
 #CHECKING OTHERS
 # subset(all_log, subset = pBGC_types=="other")
-# 
+#
 # mann=subset(all_log, subset = genus=="Mannheimia")
 # sum(mann$prophage_hits)
-# 
+#
 # write.table(mann,file = "mannheimia_table.txt", row.names = F)
 
 ##########
@@ -74,7 +74,7 @@ sort(table(all_log$species), decreasing = T)[1:50]
 sort(table(all_log$species[pBGC_indx]), decreasing = T)
 
 all_log %>% filter(pBGC_hits > 0) %>% group_by(genus) %>% summarise(count = n()) %>%
-  ggplot(.,aes(x = reorder(genus,(count)), y = count))+ geom_bar(stat="identity")+ theme_bw()+ coord_flip()+ 
+  ggplot(.,aes(x = reorder(genus,(count)), y = count))+ geom_bar(stat="identity")+ theme_bw()+ coord_flip()+
   xlab("Genera")+ ylab('Species count with pBGC') +
 ggtitle("Which genera are overrepresented pBGCs carriers?")
 ggsave("pbgc_genera_count.png", width = 11, height = 8, units = "in")
@@ -92,7 +92,7 @@ ggsave("pbgc_genera_count.png", width = 11, height = 8, units = "in")
 
 #WHICH HAVE MULTIPLE pBGCs
 table(all_log[which(all_log$pBGC_hits>1),]$species)
-all_log %>% filter(pBGC_hits > 1) %>% select(ID, pBGC_hits, genus, species) %>% 
+all_log %>% filter(pBGC_hits > 1) %>% select(ID, pBGC_hits, genus, species) %>%
   arrange(desc(pBGC_hits)) %>% write_tsv(., "genomes_morethanone_pBGC.tsv")
 
 
@@ -101,17 +101,17 @@ topNames=names(sort(table(all_log$genus[which(all_log$pBGC_hits>0)]), decreasing
 
 all_log$mainNames=as.character(all_log$genus)
 all_log$mainNames[which(is.na(match(all_log$mainNames, topNames)))]="others"
-all_log$mainNames=factor(all_log$mainNames, levels=c(topNames,"others"))  
+all_log$mainNames=factor(all_log$mainNames, levels=c(topNames,"others"))
 
 cols=brewer.pal(12, "Paired")
 all_log$cols=cols[as.numeric(all_log$mainNames)]
 
-#Distribution of pBGC across genera 
+#Distribution of pBGC across genera
 ggplot(all_log %>% filter(pBGC_hits  > 0) %>%group_by(genus,cols, mainNames) %>% tally() %>%
          mutate(prop = n / nrow(all_log %>% filter(pBGC_hits  > 0))), aes(x = "Prophages", y =prop, fill = mainNames)) +
   geom_col() + xlab('NCBI') + ylab('Fraction of pBGC hosts') +
   scale_y_continuous(labels = scales::percent) +
-  scale_fill_manual('Genera', values = cols) + theme_bw() 
+  scale_fill_manual('Genera', values = cols) + theme_bw()
 ggsave("distribution_bacteria_w_pBGC.png", width =4.06, height = 3.5, units = "in")
 
 #gBGCs more abundant in pBGC hosts?
@@ -138,12 +138,12 @@ if(writePDF) pdf("pBGCvsPHAGEvsgBGC.pdf", onefile = T)
 
 png("pBGCvsPHAGEvsgBGC.png", width=7.4, height = 4, units = "in", res=600)
 par(mai=c(.5,0.5,0.1,0.1), mgp=c(1.4,0.4,0), font.lab=2, family="serif")
-with(all_log[-pBGC_indx,], 
+with(all_log[-pBGC_indx,],
      plot( jitter((genome_anti_hits),amount = 1) ~ jitter((prophage_hits), amount=1 ) ,cex= 0.5,
-           xlab="#Prophages", ylab="#gBGCs" , xlim=c(-1,50), 
+           xlab="#Prophages", ylab="#gBGCs" , xlim=c(-1,50),
            pch=21, bg=cols, col=ifelse(pBGC_hits>0,1,"grey50") )
 )
-with(all_log[pBGC_indx,], 
+with(all_log[pBGC_indx,],
      points( jitter((genome_anti_hits),amount = 1) ~ jitter((prophage_hits), amount=1 ) , cex=ifelse(pBGC_hits==1,1,1.5),
             pch=ifelse(pBGC_hits==1,24,23), bg=cols, col=1 )
 )
@@ -173,9 +173,23 @@ dev.off()
 # source('http://www.sthda.com/sthda/RDoc/functions/addgrids3d.r')
 # s3d=scatterplot3d(x = log1p(jitter(all_log$genome_anti_hits)), y=log1p(jitter(all_log$prophage_hits)),
 #                   z=all_log$pBGC_hits,bg=all_log$cols, pch=" ",grid=TRUE, box=FALSE, xlab = "gBGCs", ylab = "Phages",zlab = "pBGCs")
-# 
+#
 # addgrids3d(x = log1p(jitter(all_log$genome_anti_hits)), y=log1p(jitter(all_log$prophage_hits)),
 #            z=all_log$pBGC_hits, grid = c( "xz", "yz"))
 # s3d$points3d(x = log1p(jitter(all_log$genome_anti_hits)), y=log1p(jitter(all_log$prophage_hits)),
 #              z=all_log$pBGC_hits,bg=all_log$cols, pch=ifelse(all_log$pBGC_hits>0,24,21))
 if(writePDF) dev.off()
+
+#Distribution of pBGC types
+
+only_pBGC %>% separate_rows(pBGC_types, sep=",\\s*") %>% group_by(pBGC_types) %>% summarise(count = n()) %>%
+  ggplot(.,aes(x = reorder(pBGC_types,(count)), y = count))+
+  geom_bar(stat="identity") +  geom_text(aes(label = count), vjust = 0, hjust= -0.5)+
+  theme_bw()+ coord_flip()+
+  xlab("Cluster Types")+ ylab('Count') +
+  ggtitle("Which cluster type are overrepresented in pBGCs carriers?")
+ggsave("distribution_bgc_types_bacteria_w_pBGC.png", width =11, height = 8, units = "in")
+
+#Display percents for each cluster type
+only_pBGC %>% separate_rows(pBGC_types, sep=",\\s*") %>%group_by(pBGC_types) %>% tally() %>%
+  mutate(percent = (n / 702) *100) %>% arrange(desc(percent))
